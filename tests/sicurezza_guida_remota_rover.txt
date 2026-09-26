@@ -1,0 +1,48 @@
+MIGLIORIE DI SICUREZZA DA AGGIUNGERE AL CONTROLLO REMOTO DEL ROVER
+
+1. TIMEOUT DI SICUREZZA
+- Memorizzare il momento dell'ultimo comando valido ricevuto.
+- Se non arriva un nuovo comando entro circa 300-500 ms, fermare automaticamente i motori.
+- Serve a evitare che il rover continui a muoversi se il client si blocca o perde la connessione.
+
+2. HEARTBEAT / INVIO PERIODICO DEI COMANDI
+- Il client deve inviare periodicamente il comando corrente, anche se non cambia.
+- Frequenza consigliata iniziale: circa ogni 50-100 ms.
+- In questo modo l'ESP32 sa che il collegamento con il controller è ancora attivo.
+
+3. STOP SU PERDITA DEL WI-FI
+- Controllare periodicamente WiFi.status().
+- Se la connessione Wi-Fi viene persa, chiamare immediatamente stopMotori().
+
+
+4. LIMITE MASSIMO DEL PWM
+- Imporre sempre un limite alla velocità.
+- Continuare a usare constrain() per mantenere il PWM nell'intervallo consentito.
+- Eventualmente impostare un limite inferiore a 255 durante i primi test.
+
+5. RAMPA DI ACCELERAZIONE E DECELERAZIONE
+- Evitare di passare istantaneamente, ad esempio, da PWM 0 a PWM 200.Attualmente il rover si muove con una pwm di 150/255 quindi circa il 60 percento della max velocita
+- Aumentare o diminuire il PWM gradualmente.
+- Riduce gli scatti del rover e le sollecitazioni su motori, ruote e driver.
+
+6. GESTIONE SICURA DELL'INVERSIONE
+- Prima di passare direttamente da avanti a indietro, portare temporaneamente il PWM a zero.
+- Attendere un brevissimo intervallo prima di invertire il verso.
+- La funzione impostaMotore() già esegue parte di questa protezione.
+
+7. STATO DEL ROVER
+- Tenere una variabile che indichi se i motori sono attualmente in movimento.
+- Evita di richiamare continuamente stopMotori() quando il rover è già fermo.
+- Può essere utile anche per il timeout e per il debug.
+
+8. LOG SERIALE DEGLI EVENTI IMPORTANTI
+- Stampare sul monitor seriale eventi come:
+  comando ricevuto
+  timeout
+  perdita Wi-Fi
+  comando non valido
+  stop automatico
+- Facilita molto il debug durante i test.
+
+
+
