@@ -66,5 +66,5 @@ Planned improvements include:
 ## Contributors
 
 This project is collaboratively developed by
-Computer Engineering students at the University
+Lorenzo Bartoli and Michele Contino, Computer Engineering students at the University
 of Naples Federico II.
